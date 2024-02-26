@@ -1,23 +1,158 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<style>
+
+  body {
+    background: linear-gradient(to right, #fbc2eb, #a6c1ee); 
+  }
+  
+  form {
+    width: 900px;  
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 10px;  
+    background: white;
+    display: flex;
+    flex-wrap: wrap; 
+  }
+  
+  label {
+    width: 100px;
+    margin-right: 10px;
+  }
+  
+  input {
+    display: flex; 
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;  
+    
+  }
+  
+  button {
+    padding: 10px 20px;
+    background: #236ceb;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;  
+  }
+  
+  table {
+    width: 100%;  
+    margin-top: 30px;
+    background-color: #f08fd5;
+  }      
+  
+  td, th {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    
+  }
+  </style>
+  
 </head>
 <body>
-    <table id="dataTable">
-        <tr>
-          <td><input type="text" /></td>
-          <td><button onclick="deleteRow(this)">Delete</button></td>
-        </tr>
-        
-        <tr>
-          <td><input type="text" /></td>
-          <td><button onclick="deleteRow(this)">Delete</button></td>
-        </tr>
-      </table>
-      
-      <button onclick="addRow()">Add Row</button>
+
+<form id="myForm">
+  
+  <label>Nominee Name:</label>
+  <input type="text" name="nominee_name">
+  
+  <label>Relation:</label>  
+  <input type="text" name="relation">
+   
+  <label>NID No:</label>
+  <input type="text" name="nid_no">
+   
+  <label>Mobile No:</label>
+  <input type="text" name="mobile_no">
+  
+  <button type="button" onclick="addRow()">Add Row</button>
+  
+</form>
+
+<table id="dataTable">
+  <tr>
+    <th>Nominee Name</th>
+    <th>Relation</th>
+    <th>NID No</th>
+    <th>Mobile No</th>    
+    <th></th>
+  </tr>  
+</table>
+
+<script>
+function addRow() {
+
+  let table = document.getElementById("dataTable");
+  
+  let nomineeName = document.getElementById("myForm").elements["nominee_name"].value;
+  let relation = document.getElementById("myForm").elements["relation"].value;  
+  let nidNo = document.getElementById("myForm").elements["nid_no"].value;
+  let mobileNo = document.getElementById("myForm").elements["mobile_no"].value;
+  
+  let data = readData();
+  
+  data.push({
+    nominee_name: nomineeName,
+    relation: relation,
+    nid_no: nidNo,
+    mobile_no: mobileNo
+  });
+  
+  saveData(data);
+  
+  displayData();
+  
+  document.getElementById("myForm").reset();  
+}
+
+function readData() {
+  let data = [];
+  let storedData = localStorage.getItem("data");  
+  if(storedData) {
+    data = JSON.parse(storedData); 
+  }
+  return data;
+}
+
+function saveData(data) {
+  let dataString = JSON.stringify(data);
+  localStorage.setItem("data", dataString);
+}
+
+function displayData() {
+  let data = readData();
+  
+  let tableHtml = "";
+  
+  data.forEach(function(row, index) {   
+    tableHtml += "<tr>";
+    tableHtml += "<td>" + row.nominee_name + "</td>";
+    tableHtml += "<td>" + row.relation + "</td>";
+    tableHtml += "<td>" + row.nid_no + "</td>";
+    tableHtml += "<td>" + row.mobile_no + "</td>";
+    
+    tableHtml += `<td><button onclick='deleteRow(${index})'>Delete</button></td>`;
+    
+    tableHtml += "</tr>";
+  });
+  
+  document.getElementById("dataTable").innerHTML = tableHtml;  
+}
+
+function deleteRow(index) {
+  let data = readData();
+  data.splice(index, 1); 
+  saveData(data);
+  displayData();
+}
+
+displayData();
+
+</script>
+
 </body>
 </html>
